@@ -1,0 +1,104 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Mission Life Sponsorship Upload Limit Handler
+Resources:
+
+# Sponsorship Upload Limit Handler Queue Resources
+  MissionLifeSponsorshipUploadLimitDeadLetterQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      DelaySeconds: 0
+      MaximumMessageSize: 262144
+      MessageRetentionPeriod: 172800
+      QueueName: MissionLifeSponsorshipUploadLimitDeadLetterQueue
+      ReceiveMessageWaitTimeSeconds: 0
+      VisibilityTimeout: 300
+  MissionLifeSponsorshipUploadLimitQueue:
+    DependsOn:
+      - MissionLifeSponsorshipUploadLimitDeadLetterQueue
+    Type: AWS::SQS::Queue
+    Properties:
+      DelaySeconds: 0
+      MaximumMessageSize: 262144
+      MessageRetentionPeriod: 172800
+      QueueName: MissionLifeSponsorshipUploadLimitQueue
+      ReceiveMessageWaitTimeSeconds: 0
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt MissionLifeSponsorshipUploadLimitDeadLetterQueue.Arn
+        maxReceiveCount: 3
+      VisibilityTimeout: 300
+
+# Sponsorship Upload Limit Handler Lambda Resources
+  MissionLifeSponsorshipUploadLimitHandler:
+    DependsOn:
+      - MissionLifeSponsorshipUploadLimitHandlerExecutionRole
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../dist/mission-life-sponsorship-upload-limit-handler.zip
+      FunctionName: missionLifeSponsorshipUploadLimitHandler
+      Handler: index.handler
+      MemorySize: 256
+      Role: !GetAtt MissionLifeSponsorshipUploadLimitHandlerExecutionRole.Arn
+      Runtime: nodejs12.x
+      Timeout: 300
+
+  MissionLifeSponsorshipUploadLimitHandlerExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+      Path: '/'
+      Policies:
+      - PolicyName: logs
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+            Resource: arn:aws:logs:*:*:*
+      - PolicyName: sqs
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - sqs:*
+            Resource: 
+              - !GetAtt MissionLifeSponsorshipUploadLimitQueue.Arn
+              - !GetAtt MissionLifeSponsorshipUploadLimitDeadLetterQueue.Arn
+      - PolicyName: dynamodb
+        PolicyDocument:
+          Statement:
+          - Effect: Allow
+            Action:
+            - dynamodb:GetItem
+            - dynamodb:GetRecords
+            - dynamodb:BatchGetItem
+            - dynamodb:BatchWriteItem
+            - dynamodb:DescribeTable
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:PutItem
+            Resource:
+            - {{{MISSION_LIFE_USERS_TABLE_ARN}}}
+      
+
+  MissionLifeSponsorshipUploadLimitHandlerLogGroup:
+    DependsOn: MissionLifeSponsorshipUploadLimitHandler
+    Type: AWS::Logs::LogGroup
+    Properties:
+      RetentionInDays: 14
+      LogGroupName: !Join
+        - ''
+        - - 'lambda/'
+          - !Ref MissionLifeSponsorshipUploadLimitHandler
+
