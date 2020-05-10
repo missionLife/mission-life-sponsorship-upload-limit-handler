@@ -3,7 +3,7 @@ export class MissionLifeUsersDataRepo {
     this.documentClient = documentClient;
   }
 
-  async updateSupporterSponsorshipTimestamp(supporterEmail, sponsorshipId) {
+  async updateSupporterSponsorshipTimestamp({supporterEmail, sponsorshipId}) {
     if (!supporterEmail || typeof supporterEmail !== 'string') {
       throw new TypeError(
         `MissionLifeUsersDataRepo - updateSupporterSponsorshipTimestamp - supporterEmail must be a string. Value Provided: ${supporterEmail}`

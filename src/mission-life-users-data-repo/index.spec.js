@@ -34,10 +34,10 @@ describe('Mission Life Users Data Repo', () => {
         documentClientSpy
       );
 
-      await missionLifeUsersDataRepo.updateSupporterSponsorshipTimestamp(
-        'aUserEmail@email.com',
-        123
-      );
+      await missionLifeUsersDataRepo.updateSupporterSponsorshipTimestamp({
+        supporterEmail: 'aUserEmail@email.com',
+        sponsorshipId: 123
+      });
 
       expect(documentClientSpy.put).toHaveBeenCalled();
       expect(documentClientSpy.put).toHaveBeenCalledWith(
@@ -58,10 +58,10 @@ describe('Mission Life Users Data Repo', () => {
       );
 
       try {
-        await missionLifeUsersDataRepo.updateSupporterSponsorshipTimestamp(
-          null,
-          123
-        );
+        await missionLifeUsersDataRepo.updateSupporterSponsorshipTimestamp({
+          supporterEmail: null,
+          sponsorshipId: 123
+        });
         fail();
       } catch (error) {
         expect(error.message).toContain('supporterEmail');
@@ -74,10 +74,10 @@ describe('Mission Life Users Data Repo', () => {
       );
 
       try {
-        await missionLifeUsersDataRepo.updateSupporterSponsorshipTimestamp(
-          'aUserEmail@email.com',
-          null
-        );
+        await missionLifeUsersDataRepo.updateSupporterSponsorshipTimestamp({
+          supporterEmail: 'aUserEmail@email.com',
+          sponsorshipId: null
+        });
         fail();
       } catch (error) {
         expect(error.message).toContain('sponsorshipId');
