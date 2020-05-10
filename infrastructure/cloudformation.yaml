@@ -42,6 +42,12 @@ Resources:
       Role: !GetAtt MissionLifeSponsorshipUploadLimitHandlerExecutionRole.Arn
       Runtime: nodejs12.x
       Timeout: 300
+      Events:
+        SQSEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt MissionLifeSponsorshipUploadLimitQueue.Arn
+            BatchSize: 10
 
   MissionLifeSponsorshipUploadLimitHandlerExecutionRole:
     Type: AWS::IAM::Role
