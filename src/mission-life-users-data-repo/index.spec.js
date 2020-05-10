@@ -1,4 +1,4 @@
-import MissionLifeUsersDataRepo from './index';
+import { MissionLifeUsersDataRepo } from './index';
 
 describe('Mission Life Users Data Repo', () => {
   it('should exist', () => {

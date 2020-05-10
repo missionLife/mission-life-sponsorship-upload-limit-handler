@@ -1,4 +1,4 @@
-export default class SupporterSponsorship {
+export class SupporterSponsorship {
   constructor({ supporterEmail, sponsorshipId }) {
     if (!supporterEmail || typeof supporterEmail !== 'string') {
       throw new TypeError(

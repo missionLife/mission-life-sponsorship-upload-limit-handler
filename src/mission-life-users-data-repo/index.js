@@ -1,4 +1,4 @@
-export default class MissionLifeUsersDataRepo {
+export class MissionLifeUsersDataRepo {
   constructor(documentClient) {
     this.documentClient = documentClient;
   }

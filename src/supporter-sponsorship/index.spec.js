@@ -1,4 +1,4 @@
-import SupporterSponsorship from './index';
+import { SupporterSponsorship } from './index';
 
 describe('Supporter Sponsorship', () => {
   it('should exist', () => {

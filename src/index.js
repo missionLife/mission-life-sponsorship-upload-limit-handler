@@ -1,5 +1,5 @@
 import AWS from "aws-sdk";
-import MissionLifeUsersDataRepo from "./mission-life-users-data-repo";
+import { MissionLifeUsersDataRepo } from "./mission-life-users-data-repo";
 import { SupporterSponsorship } from './supporter-sponsorship';
 
 AWS.config.setPromisesDependency(Promise);
