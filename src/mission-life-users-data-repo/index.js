@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 export class MissionLifeUsersDataRepo {
   constructor(documentClient) {
     this.documentClient = documentClient;
@@ -19,7 +21,7 @@ export class MissionLifeUsersDataRepo {
       Item: {
         EMAIL: supporterEmail,
         SPONSORSHIP_ID: sponsorshipId,
-        LAST_UPLOAD_TIMESTAMP: new Date().toString()
+        LAST_UPLOAD_TIMESTAMP: moment().toISOString()
       }
     }
 
