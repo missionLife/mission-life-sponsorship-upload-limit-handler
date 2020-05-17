@@ -19,14 +19,15 @@ export class MissionLifeUsersDataRepo {
 
     var params = {
       TableName: 'MISSION_LIFE_USERS',
-      Key: { EMAIL : supporterEmail },
-      UpdateExpression: 'set #s = :s, #l = :l',
+      Key: { 
+        'EMAIL' : supporterEmail,
+        'SPONSORSHIP_ID': sponsorshipId
+      },
+      UpdateExpression: 'set #l = :l',
       ExpressionAttributeNames: {
-        '#s' : 'SPONSORSHIP_ID',
         '#l' : 'LAST_UPLOAD_TIMESTAMP'
       },
       ExpressionAttributeValues: {
-        ':s' : sponsorshipId,
         ':l' : moment().toISOString(),
       }
     };
