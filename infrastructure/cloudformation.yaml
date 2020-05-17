@@ -94,6 +94,7 @@ Resources:
             - dynamodb:Query
             - dynamodb:Scan
             - dynamodb:PutItem
+            - dynamodb:UpdateItem
             Resource:
             - {{{MISSION_LIFE_USERS_TABLE_ARN}}}
       
