@@ -8,22 +8,20 @@ describe('Mission Life Users Data Repo', () => {
   let documentClientSpy;
 
   beforeEach(() => {
-    documentClientSpy = jasmine.createSpyObj('documentClientSpy', ['put']);
-    documentClientSpy.put.and.returnValue({
+    documentClientSpy = jasmine.createSpyObj('documentClientSpy', ['update']);
+    documentClientSpy.update.and.returnValue({
       promise: () => Promise.resolve({
-        Items: [
-          {
-            SPONSORSHIP_ID: 1234,
-            NAME: 'aName',
-            EMAIL: 'aUserEmail@email.com',
-            LAST_UPLOAD_TIMESTAMP: new Date()
-          },
-          {
-            SPONSORSHIP_ID: 5678,
-            EMAIL: 'aUserEmail@email.com',
-            LAST_UPLOAD_TIMESTAMP: new Date()
-          }
-        ] 
+        TableName: 'MISSION_LIFE_USERS',
+        Key: { EMAIL : 'aUserEmail@email.com' },
+        UpdateExpression: 'set #s = :s, #l = :l',
+        ExpressionAttributeNames: {
+          '#s' : 'SPONSORSHIP_ID',
+          '#l' : 'LAST_UPLOAD_TIMESTAMP'
+        },
+        ExpressionAttributeValues: {
+          ':s' : 123,
+          ':l' : 'aTimestampGoesHere',
+        }
       })
     });
   });
@@ -39,15 +37,14 @@ describe('Mission Life Users Data Repo', () => {
         sponsorshipId: 123
       });
 
-      expect(documentClientSpy.put).toHaveBeenCalled();
-      expect(documentClientSpy.put).toHaveBeenCalledWith(
+      expect(documentClientSpy.update).toHaveBeenCalled();
+      expect(documentClientSpy.update).toHaveBeenCalledWith(
         jasmine.objectContaining({
           TableName: 'MISSION_LIFE_USERS',
-          Item: jasmine.objectContaining({
-            EMAIL: 'aUserEmail@email.com', 
-            SPONSORSHIP_ID: 123, 
-            LAST_UPLOAD_TIMESTAMP: jasmine.any(String)
-          })
+          Key: jasmine.objectContaining({
+            EMAIL: 'aUserEmail@email.com',
+          }),
+          UpdateExpression: 'set #s = :s, #l = :l'
         })
       );
     });

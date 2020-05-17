@@ -16,15 +16,21 @@ export class MissionLifeUsersDataRepo {
         `MissionLifeUsersDataRepo - updateSupporterSponsorshipTimestamp - sponsorshipId must be a number. Value Provided: ${sponsorshipId}`
       );
     }
-    let putItemParams = {
-      TableName: 'MISSION_LIFE_USERS',
-      Item: {
-        EMAIL: supporterEmail,
-        SPONSORSHIP_ID: sponsorshipId,
-        LAST_UPLOAD_TIMESTAMP: moment().toISOString()
-      }
-    }
 
-    return this.documentClient.put(putItemParams).promise();
+    var params = {
+      TableName: 'MISSION_LIFE_USERS',
+      Key: { EMAIL : supporterEmail },
+      UpdateExpression: 'set #s = :s, #l = :l',
+      ExpressionAttributeNames: {
+        '#s' : 'SPONSORSHIP_ID',
+        '#l' : 'LAST_UPLOAD_TIMESTAMP'
+      },
+      ExpressionAttributeValues: {
+        ':s' : sponsorshipId,
+        ':l' : moment().toISOString(),
+      }
+    };
+
+    return this.documentClient.update(params).promise();
   }
 }
