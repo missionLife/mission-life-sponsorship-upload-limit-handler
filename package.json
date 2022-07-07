@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "aws-sdk": "2.653.0",
-    "moment": "^2.25.3",
+    "moment": "^2.29.4",
     "node-fetch": "2.6.0"
   }
 }
